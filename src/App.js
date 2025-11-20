@@ -7,7 +7,6 @@ const API_URL = process.env.REACT_APP_API_URL;
 // Verificar que la URL esté configurada
 if (!API_URL) {
   console.error('❌ ERROR: REACT_APP_API_URL no está configurada');
-  console.error('Configura la variable de entorno en Vercel con tu URL de Apps Script');
 }
 
 console.log('🔧 API URL configurada:', API_URL);
@@ -107,10 +106,9 @@ function Login({ onLogin }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Verificar configuración al cargar
   useEffect(() => {
     if (!API_URL) {
-      setError('Error de configuración: URL del API no configurada. Contacta al administrador.');
+      setError('Error de configuración: URL del API no configurada.');
     }
   }, []);
 
@@ -140,7 +138,7 @@ function Login({ onLogin }) {
       }
     } catch (err) {
       console.error('❌ Error de conexión:', err);
-      setError('Error de conexión. Verifica tu internet o contacta al administrador.');
+      setError('Error de conexión. Verifica tu internet.');
     } finally {
       setLoading(false);
     }
@@ -213,7 +211,7 @@ function Login({ onLogin }) {
   );
 }
 
-// Componente Dashboard Principal
+// Componente Dashboard
 function Dashboard({ user, onLogout }) {
   const [personal, setPersonal] = useState([]);
   const [asistencias, setAsistencias] = useState([]);
@@ -252,12 +250,10 @@ function Dashboard({ user, onLogout }) {
       if (asistenciasResult.success) {
         setAsistencias(asistenciasResult.data || []);
         console.log('✅ Asistencias cargadas:', asistenciasResult.data?.length || 0);
-      } else {
-        console.error('❌ Error al cargar asistencias:', asistenciasResult.message);
       }
     } catch (err) {
       console.error('❌ Error al cargar datos:', err);
-      mostrarMensaje('Error al cargar datos: ' + err.message, 'error');
+      mostrarMensaje('Error al cargar datos', 'error');
     } finally {
       setLoading(false);
     }
@@ -288,13 +284,12 @@ function Dashboard({ user, onLogout }) {
       }
     } catch (err) {
       console.error('❌ Error al registrar:', err);
-      mostrarMensaje('Error al registrar asistencia: ' + err.message, 'error');
+      mostrarMensaje('Error al registrar asistencia', 'error');
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center flex-wrap gap-4">
@@ -318,7 +313,6 @@ function Dashboard({ user, onLogout }) {
         </div>
       </header>
 
-      {/* Mensajes */}
       {mensaje && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
           <div className={`flex items-center gap-2 p-4 rounded-lg shadow-sm ${
@@ -330,9 +324,7 @@ function Dashboard({ user, onLogout }) {
         </div>
       )}
 
-      {/* Contenido Principal */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Selector de Fecha */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
           <div className="flex items-center gap-4 flex-wrap">
             <Calendar className="text-indigo-600" size={24} />
@@ -366,7 +358,6 @@ function Dashboard({ user, onLogout }) {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Lista de Personal */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="p-6 border-b border-gray-200 bg-gray-50">
                 <div className="flex items-center justify-between">
@@ -379,12 +370,11 @@ function Dashboard({ user, onLogout }) {
                   </span>
                 </div>
               </div>
-              <div className="p-4 max-h-[600px] overflow-y-auto">
+              <div className="p-4 max-h-96 overflow-y-auto">
                 {personal.length === 0 ? (
                   <div className="text-center py-12">
                     <Users className="mx-auto text-gray-300 mb-4" size={48} />
-                    <p className="text-gray-500 font-medium">No hay personal registrado para {user.ciudad}</p>
-                    <p className="text-gray-400 text-sm mt-2">Verifica la hoja Personal en Google Sheets</p>
+                    <p className="text-gray-500 font-medium">No hay personal para {user.ciudad}</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -424,7 +414,6 @@ function Dashboard({ user, onLogout }) {
               </div>
             </div>
 
-            {/* Formulario de Registro */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="p-6 border-b border-gray-200 bg-gray-50">
                 <h2 className="text-lg font-semibold text-gray-800">Registrar Asistencia</h2>
@@ -440,10 +429,7 @@ function Dashboard({ user, onLogout }) {
                   <div className="text-center py-16">
                     <Users className="mx-auto text-gray-300 mb-4" size={64} />
                     <p className="text-gray-500 font-medium">
-                      Selecciona una persona para registrar su asistencia
-                    </p>
-                    <p className="text-gray-400 text-sm mt-2">
-                      Haz clic en cualquier nombre de la lista
+                      Selecciona una persona
                     </p>
                   </div>
                 )}
@@ -452,7 +438,6 @@ function Dashboard({ user, onLogout }) {
           </div>
         )}
 
-        {/* Listado de Asistencias del Día */}
         {!loading && asistencias.length > 0 && (
           <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
             <div className="p-6 border-b border-gray-200 bg-gray-50">
@@ -461,7 +446,7 @@ function Dashboard({ user, onLogout }) {
                   Asistencias Registradas
                 </h2>
                 <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
-                  {asistencias.length} registros
+                  {asistencias.length}
                 </span>
               </div>
             </div>
@@ -469,40 +454,22 @@ function Dashboard({ user, onLogout }) {
               <table className="w-full">
                 <thead className="bg-gray-100 border-b-2 border-gray-200">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                      Personal
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                      Entrada
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                      Salida
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                      Jornada
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                      Horas
-                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Personal</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Entrada</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Salida</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Jornada</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Horas</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {asistencias.map((asistencia, index) => (
                     <tr key={asistencia.idRegistro} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                        {asistencia.nombreCompleto}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-700 font-mono">
-                        {asistencia.horaEntrada || '-'}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-700 font-mono">
-                        {asistencia.horaSalida || '-'}
-                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{asistencia.nombreCompleto}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700 font-mono">{asistencia.horaEntrada || '-'}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700 font-mono">{asistencia.horaSalida || '-'}</td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${
-                          asistencia.tipoJornada === '6 horas'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-purple-100 text-purple-800'
+                          asistencia.tipoJornada === '6 horas' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
                         }`}>
                           {asistencia.tipoJornada}
                         </span>
@@ -522,7 +489,7 @@ function Dashboard({ user, onLogout }) {
   );
 }
 
-// Componente Formulario de Registro
+// Componente Formulario
 function RegistroForm({ persona, onSubmit, onCancel }) {
   const [horaEntrada, setHoraEntrada] = useState('');
   const [horaSalida, setHoraSalida] = useState('');
@@ -546,9 +513,7 @@ function RegistroForm({ persona, onSubmit, onCancel }) {
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-5 rounded-lg border-2 border-indigo-200">
-        <p className="font-bold text-gray-800 text-lg">
-          {persona.nombre} {persona.apellido}
-        </p>
+        <p className="font-bold text-gray-800 text-lg">{persona.nombre} {persona.apellido}</p>
         <p className="text-sm text-gray-600 mt-1">{persona.cargo}</p>
         <p className="text-xs text-indigo-600 mt-2 font-medium">ID: {persona.id}</p>
       </div>
@@ -567,7 +532,7 @@ function RegistroForm({ persona, onSubmit, onCancel }) {
 
       <div>
         <label className="block text-sm font-bold text-gray-700 mb-2">
-          Hora de Salida <span className="text-gray-400 text-xs font-normal">(opcional)</span>
+          Hora de Salida
         </label>
         <input
           type="time"
@@ -587,8 +552,8 @@ function RegistroForm({ persona, onSubmit, onCancel }) {
             onClick={() => setTipoJornada('4 horas')}
             className={`py-4 px-4 rounded-lg font-bold transition-all border-2 ${
               tipoJornada === '4 horas'
-                ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg transform scale-105'
-                : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-300 hover:bg-gray-50'
+                ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg'
+                : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-300'
             }`}
           >
             4 Horas
@@ -598,8 +563,8 @@ function RegistroForm({ persona, onSubmit, onCancel }) {
             onClick={() => setTipoJornada('6 horas')}
             className={`py-4 px-4 rounded-lg font-bold transition-all border-2 ${
               tipoJornada === '6 horas'
-                ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg transform scale-105'
-                : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-300 hover:bg-gray-50'
+                ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg'
+                : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-300'
             }`}
           >
             6 Horas
@@ -610,10 +575,40 @@ function RegistroForm({ persona, onSubmit, onCancel }) {
       <div className="flex gap-3 pt-4 border-t-2 border-gray-200">
         <button
           onClick={onCancel}
-          className="flex-1 py-3 px-4 border-2 border-gray-300 rounded-lg font-bold text-gray-700 hover:bg-gray-100 transition-colors"
+          className="flex-1 py-3 px-4 border-2 border-gray-300 rounded-lg font-bold text-gray-700 hover:bg-gray-100"
         >
           Cancelar
         </button>
         <button
           onClick={handleSubmit}
-          className="flex-1 py-3 px-4 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl"
+          className="flex-1 py-3 px-4 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 shadow-lg"
+        >
+          ✓ Registrar
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// App Principal
+export default function App() {
+  const [user, setUser] = useState(null);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+  };
+
+  return (
+    <div className="App">
+      {!user ? (
+        <Login onLogin={handleLogin} />
+      ) : (
+        <Dashboard user={user} onLogout={handleLogout} />
+      )}
+    </div>
+  );
+}
