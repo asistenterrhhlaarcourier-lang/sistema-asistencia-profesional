@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Clock, LogOut, Users, Calendar, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 // IMPORTANTE: Reemplaza esta URL con tu URL de Google Apps Script deployment
-const API_URL = 'https://script.google.com/macros/s/AKfycbwT_EgQ0yD0NcG34qLx72eFnWSlgQqvkc1zI256F4vnYxj8Ou8hT6MkjDwb4rMh0YwHIQ/exec';
+const API_URL = process.env.REACT_APP_API_URL || 'https://script.google.com/macros/s/AKfycbwT_EgQ0yD0NcG34qLx72eFnWSlgQqvkc1zI256F4vnYxj8Ou8hT6MkjDwb4rMh0YwHIQ/exec';
 
 // Servicio de API
 const api = {
