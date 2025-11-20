@@ -1,44 +1,102 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, LogOut, Users, Calendar, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
-// IMPORTANTE: Reemplaza esta URL con tu URL de Google Apps Script deployment
-const API_URL = process.env.REACT_APP_API_URL || 'https://script.google.com/macros/s/AKfycbwT_EgQ0yD0NcG34qLx72eFnWSlgQqvkc1zI256F4vnYxj8Ou8hT6MkjDwb4rMh0YwHIQ/exec';
+// Configuración del API - Usa variable de entorno de Vercel
+const API_URL = process.env.REACT_APP_API_URL;
+
+// Verificar que la URL esté configurada
+if (!API_URL) {
+  console.error('❌ ERROR: REACT_APP_API_URL no está configurada');
+  console.error('Configura la variable de entorno en Vercel con tu URL de Apps Script');
+}
+
+console.log('🔧 API URL configurada:', API_URL);
 
 // Servicio de API
 const api = {
   login: async (usuario, password) => {
-    const formData = new FormData();
-    formData.append('action', 'login');
-    formData.append('usuario', usuario);
-    formData.append('password', password);
-    
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      body: formData
-    });
-    return response.json();
+    try {
+      console.log('📤 Enviando login para:', usuario);
+      
+      const formData = new FormData();
+      formData.append('action', 'login');
+      formData.append('usuario', usuario);
+      formData.append('password', password);
+      
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        body: formData
+      });
+      
+      console.log('📥 Respuesta recibida, status:', response.status);
+      
+      const data = await response.json();
+      console.log('📊 Data:', data);
+      
+      return data;
+    } catch (error) {
+      console.error('❌ Error en login:', error);
+      throw error;
+    }
   },
   
   getPersonal: async (ciudad) => {
-    const response = await fetch(`${API_URL}?action=getPersonal&ciudad=${encodeURIComponent(ciudad)}`);
-    return response.json();
+    try {
+      console.log('📤 Obteniendo personal para:', ciudad);
+      
+      const url = `${API_URL}?action=getPersonal&ciudad=${encodeURIComponent(ciudad)}`;
+      console.log('🔗 URL:', url);
+      
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      console.log('📊 Personal recibido:', data);
+      
+      return data;
+    } catch (error) {
+      console.error('❌ Error en getPersonal:', error);
+      throw error;
+    }
   },
   
   registrarAsistencia: async (datos) => {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'registrarAsistencia',
-        ...datos
-      })
-    });
-    return response.json();
+    try {
+      console.log('📤 Registrando asistencia:', datos);
+      
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'registrarAsistencia',
+          ...datos
+        })
+      });
+      
+      const data = await response.json();
+      console.log('📊 Resultado:', data);
+      
+      return data;
+    } catch (error) {
+      console.error('❌ Error en registrarAsistencia:', error);
+      throw error;
+    }
   },
   
   getAsistenciasDelDia: async (ciudad, fecha) => {
-    const response = await fetch(`${API_URL}?action=getAsistenciasDelDia&ciudad=${encodeURIComponent(ciudad)}&fecha=${fecha}`);
-    return response.json();
+    try {
+      console.log('📤 Obteniendo asistencias:', ciudad, fecha);
+      
+      const url = `${API_URL}?action=getAsistenciasDelDia&ciudad=${encodeURIComponent(ciudad)}&fecha=${fecha}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      console.log('📊 Asistencias recibidas:', data);
+      
+      return data;
+    } catch (error) {
+      console.error('❌ Error en getAsistenciasDelDia:', error);
+      throw error;
+    }
   }
 };
 
@@ -49,9 +107,21 @@ function Login({ onLogin }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Verificar configuración al cargar
+  useEffect(() => {
+    if (!API_URL) {
+      setError('Error de configuración: URL del API no configurada. Contacta al administrador.');
+    }
+  }, []);
+
   const handleSubmit = async () => {
     if (!usuario || !password) {
       setError('Por favor completa todos los campos');
+      return;
+    }
+
+    if (!API_URL) {
+      setError('Error de configuración del sistema');
       return;
     }
 
@@ -60,13 +130,17 @@ function Login({ onLogin }) {
 
     try {
       const result = await api.login(usuario, password);
+      
       if (result.success) {
+        console.log('✅ Login exitoso');
         onLogin(result.data);
       } else {
+        console.log('❌ Login fallido:', result.message);
         setError(result.message);
       }
     } catch (err) {
-      setError('Error de conexión. Verifica tu conexión a internet.');
+      console.error('❌ Error de conexión:', err);
+      setError('Error de conexión. Verifica tu internet o contacta al administrador.');
     } finally {
       setLoading(false);
     }
@@ -95,6 +169,7 @@ function Login({ onLogin }) {
               onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
               placeholder="supervisor.ciudad"
+              disabled={!API_URL}
             />
           </div>
 
@@ -109,6 +184,7 @@ function Login({ onLogin }) {
               onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
               placeholder="••••••••"
+              disabled={!API_URL}
             />
           </div>
 
@@ -121,7 +197,7 @@ function Login({ onLogin }) {
 
           <button
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || !API_URL}
             className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Ingresando...' : 'Ingresar'}
@@ -154,20 +230,34 @@ function Dashboard({ user, onLogout }) {
 
   const cargarDatos = async () => {
     setLoading(true);
+    console.log('🔄 Cargando datos para:', user.ciudad, fecha);
+    
     try {
       const [personalResult, asistenciasResult] = await Promise.all([
         api.getPersonal(user.ciudad),
         api.getAsistenciasDelDia(user.ciudad, fecha)
       ]);
 
+      console.log('Resultado Personal:', personalResult);
+      console.log('Resultado Asistencias:', asistenciasResult);
+
       if (personalResult.success) {
         setPersonal(personalResult.data || []);
+        console.log('✅ Personal cargado:', personalResult.data?.length || 0);
+      } else {
+        console.error('❌ Error al cargar personal:', personalResult.message);
+        mostrarMensaje('Error al cargar personal: ' + personalResult.message, 'error');
       }
+      
       if (asistenciasResult.success) {
         setAsistencias(asistenciasResult.data || []);
+        console.log('✅ Asistencias cargadas:', asistenciasResult.data?.length || 0);
+      } else {
+        console.error('❌ Error al cargar asistencias:', asistenciasResult.message);
       }
     } catch (err) {
-      mostrarMensaje('Error al cargar datos', 'error');
+      console.error('❌ Error al cargar datos:', err);
+      mostrarMensaje('Error al cargar datos: ' + err.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -197,7 +287,8 @@ function Dashboard({ user, onLogout }) {
         mostrarMensaje(result.message, 'error');
       }
     } catch (err) {
-      mostrarMensaje('Error al registrar asistencia', 'error');
+      console.error('❌ Error al registrar:', err);
+      mostrarMensaje('Error al registrar asistencia: ' + err.message, 'error');
     }
   };
 
@@ -258,7 +349,7 @@ function Dashboard({ user, onLogout }) {
               />
             </div>
             <div className="text-sm text-gray-600">
-              {new Date(fecha).toLocaleDateString('es-ES', { 
+              {new Date(fecha + 'T12:00:00').toLocaleDateString('es-ES', { 
                 weekday: 'long', 
                 year: 'numeric', 
                 month: 'long', 
@@ -292,7 +383,8 @@ function Dashboard({ user, onLogout }) {
                 {personal.length === 0 ? (
                   <div className="text-center py-12">
                     <Users className="mx-auto text-gray-300 mb-4" size={48} />
-                    <p className="text-gray-500">No hay personal registrado</p>
+                    <p className="text-gray-500 font-medium">No hay personal registrado para {user.ciudad}</p>
+                    <p className="text-gray-400 text-sm mt-2">Verifica la hoja Personal en Google Sheets</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -525,33 +617,3 @@ function RegistroForm({ persona, onSubmit, onCancel }) {
         <button
           onClick={handleSubmit}
           className="flex-1 py-3 px-4 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl"
-        >
-          ✓ Registrar
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// App Principal
-export default function App() {
-  const [user, setUser] = useState(null);
-
-  const handleLogin = (userData) => {
-    setUser(userData);
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-  };
-
-  return (
-    <div className="App">
-      {!user ? (
-        <Login onLogin={handleLogin} />
-      ) : (
-        <Dashboard user={user} onLogout={handleLogout} />
-      )}
-    </div>
-  );
-}
