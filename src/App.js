@@ -27,15 +27,15 @@ const api = {
     }
   },
   
-  getPersonal: async (ciudad) => {
+  getPersonalPorCiudad: async (ciudad) => {
     try {
-      const url = `${API_URL}?action=getPersonal&ciudad=${encodeURIComponent(ciudad)}`;
+      const url = `${API_URL}?action=getPersonalPorCiudad&ciudad=${encodeURIComponent(ciudad)}`;
       const response = await fetch(url);
       const data = await response.json();
       console.log('Personal recibido:', data);
       return data;
     } catch (error) {
-      console.error('Error en getPersonal:', error);
+      console.error('Error en getPersonalPorCiudad:', error);
       throw error;
     }
   },
@@ -179,7 +179,7 @@ function Dashboard({ user, onLogout }) {
     setLoading(true);
     try {
       const [personalResult, asistenciasResult] = await Promise.all([
-        api.getPersonal(user.ciudad),
+        api.getPersonalPorCiudad(user.ciudad),
         api.getAsistenciasDelDia(user.ciudad, fecha)
       ]);
       if (personalResult.success) {
