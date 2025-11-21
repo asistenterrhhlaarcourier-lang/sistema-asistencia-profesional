@@ -45,6 +45,8 @@ getPersonalPorCiudad: async (ciudad) => {
   registrarAsistencia: async (datos) => {
     const response = await fetch(API_URL, {
       method: 'POST',
+      mode: 'cors', // Explícitamente solicitar CORS
+      cache: 'no-cache',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         action: 'registrarAsistencia',
