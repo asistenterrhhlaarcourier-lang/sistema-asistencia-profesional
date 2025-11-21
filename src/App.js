@@ -552,7 +552,7 @@ function RegistroForm({ persona, onSubmit, onCancel }) {
   );
 }
 
-// App Principal
+// App Principa
 export default function App() {
   const [user, setUser] = useState(null);
 
