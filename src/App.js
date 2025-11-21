@@ -43,7 +43,7 @@ getPersonalPorCiudad: async (ciudad) => {
   },
   
   registrarAsistencia: async (datos) => {
-    const response = await fetch(API_URL, {
+    const response = await fetch(url, {
       method: 'POST',
       mode: 'cors', // Explícitamente solicitar CORS
       cache: 'no-cache',
