@@ -158,8 +158,6 @@ function Login({ onLogin }) {
         </div>
 
         <div className="mt-6 text-center text-xs text-gray-500">
-          <p>Credenciales de prueba:</p>
-          <p>Usuario: supervisor.quito | Contraseña: demo123</p>
         </div>
       </div>
     </div>
@@ -286,13 +284,13 @@ function Dashboard({ user, onLogout }) {
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
               />
             </div>
-            <div className="text-sm text-gray-600">
-              {new Date(fecha).toLocaleDateString('es-ES', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
+          <div className="text-sm text-gray-600">
+            {new Date(fecha + 'T12:00:00').toLocaleDateString('es-ES', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
             </div>
           </div>
         </div>
