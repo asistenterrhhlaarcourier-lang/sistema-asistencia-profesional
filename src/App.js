@@ -437,7 +437,7 @@ function Dashboard({ user, onLogout }) {
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${
-                          asistencia.tipoJornada === '6 horas'
+                          asistencia.tipoJornada === '8 horas'
                             ? 'bg-blue-100 text-blue-800'
                             : 'bg-purple-100 text-purple-800'
                         }`}>
@@ -463,7 +463,7 @@ function Dashboard({ user, onLogout }) {
 function RegistroForm({ persona, onSubmit, onCancel }) {
   const [horaEntrada, setHoraEntrada] = useState('');
   const [horaSalida, setHoraSalida] = useState('');
-  const [tipoJornada, setTipoJornada] = useState('6 horas');
+  const [tipoJornada, setTipoJornada] = useState('8 horas');
 
   const handleSubmit = () => {
     if (!horaEntrada) {
@@ -532,7 +532,7 @@ function RegistroForm({ persona, onSubmit, onCancel }) {
           </button>
           <button
             type="button"
-            onClick={() => setTipoJornada('6 horas')}
+            onClick={() => setTipoJornada('8 horas')}
             className={`py-4 px-4 rounded-lg font-bold transition-all border-2 ${
               tipoJornada === '8 horas'
                 ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg transform scale-105'
