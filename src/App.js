@@ -42,18 +42,20 @@ getPersonalPorCiudad: async (ciudad) => {
     }
   },
   
-  registrarAsistencia: async (datos) => {
+registrarAsistencia: async (datos) => {
+  try {
     const response = await fetch(API_URL, {
       method: 'POST',
-      mode: 'cors', // Explícitamente solicitar CORS
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'registrarAsistencia',
-        ...datos
-      })
+      body: JSON.stringify({ action: 'registrarAsistencia', ...datos })
     });
-    return response.json();
-  },
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error al registrar:', error);
+    throw error;
+  }
+},
   
   getAsistenciasDelDia: async (ciudad, fecha) => {
     const response = await fetch(`${API_URL}?action=getAsistenciasDelDia&ciudad=${encodeURIComponent(ciudad)}&fecha=${fecha}`);
