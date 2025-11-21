@@ -20,8 +20,29 @@ const api = {
   },
   
   getPersonalPorCiudad: async (ciudad) => {
-    const response = await fetch(`${API_URL}?action=getPersonalPorCiudad&ciudad=${encodeURIComponent(ciudad)}`);
-    return response.json();
+    try {
+    console.log('📤 Obteniendo personal para:', ciudad);
+    
+    // Agregar parámetro para indicar que es una petición GET simple
+    const url = `${API_URL}?action=getPersonaPorCiudadl&ciudad=${encodeURIComponent(ciudad)}&timestamp=${Date.now()}`;
+    console.log('🔗 URL:', url);
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      mode: 'cors', // Explícitamente solicitar CORS
+      cache: 'no-cache'
+    });
+    
+    const data = await response.json();
+    console.log('📊 Personal recibido:', data);
+    
+    return data;
+  } catch (error) {
+    console.error('❌ Error en getPersonal:', error);
+    throw error;
+  }
+}
+    
   },
   
   registrarAsistencia: async (datos) => {
