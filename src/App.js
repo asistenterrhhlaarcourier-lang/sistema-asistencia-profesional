@@ -41,10 +41,7 @@ const api = {
     console.error('❌ Error en getPersonal:', error);
     throw error;
   }
-}
-    
-  },
-  
+},
   registrarAsistencia: async (datos) => {
     const response = await fetch(API_URL, {
       method: 'POST',
