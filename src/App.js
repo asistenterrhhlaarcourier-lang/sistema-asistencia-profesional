@@ -44,15 +44,23 @@ getPersonalPorCiudad: async (ciudad) => {
   
 registrarAsistencia: async (datos) => {
   try {
+    console.log('📤 Registrando asistencia:', datos);
+    
+    // Usar FormData en lugar de JSON para evitar preflight
+    const formData = new FormData();
+    formData.append('action', 'registrarAsistencia');
+    formData.append('datos', JSON.stringify(datos));
+    
     const response = await fetch(API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'registrarAsistencia', ...datos })
+      body: formData
     });
+    
     const data = await response.json();
+    console.log('📊 Resultado registro:', data);
     return data;
   } catch (error) {
-    console.error('Error al registrar:', error);
+    console.error('❌ Error al registrar:', error);
     throw error;
   }
 },
