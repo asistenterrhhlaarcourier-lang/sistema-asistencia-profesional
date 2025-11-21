@@ -534,12 +534,12 @@ function RegistroForm({ persona, onSubmit, onCancel }) {
             type="button"
             onClick={() => setTipoJornada('6 horas')}
             className={`py-4 px-4 rounded-lg font-bold transition-all border-2 ${
-              tipoJornada === '6 horas'
+              tipoJornada === '8 horas'
                 ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg transform scale-105'
                 : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-300 hover:bg-gray-50'
             }`}
           >
-            6 Horas
+            8 Horas
           </button>
         </div>
       </div>
