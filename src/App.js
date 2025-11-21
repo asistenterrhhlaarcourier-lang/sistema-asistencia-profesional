@@ -19,11 +19,11 @@ const api = {
     return response.json();
   },
   
-getPersonal: async (ciudad) => {
+getPersonalPorCiudad: async (ciudad) => {
     try {
       console.log('📤 Obteniendo personal para:', ciudad);
       
-      const url = `${API_URL}?action=getPersonal&ciudad=${encodeURIComponent(ciudad)}`;
+      const url = `${API_URL}?action=getPersonalPorCiudad&ciudad=${encodeURIComponent(ciudad)}`;
       console.log('🔗 URL:', url);
       
       const response = await fetch(url,{
@@ -37,7 +37,7 @@ getPersonal: async (ciudad) => {
       
       return data;
     } catch (error) {
-      console.error('❌ Error en getPersonal:', error);
+      console.error('❌ Error en getPersonalPorCiudad:', error);
       throw error;
     }
   },
