@@ -181,6 +181,9 @@ function Dashboard({ user, onLogout }) {
 
   const cargarDatos = async () => {
     setLoading(true);
+    console.log('🔄 Cargando datos para:', user.ciudad, fecha);
+    console.log('📅 FECHA EXACTA que se envía:', fecha);
+    console.log('📅 TIPO de fecha:', typeof fecha);
     try {
       const [personalResult, asistenciasResult] = await Promise.all([
         api.getPersonalPorCiudad(user.ciudad),
