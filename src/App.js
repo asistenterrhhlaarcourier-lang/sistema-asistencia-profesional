@@ -192,6 +192,10 @@ function Dashboard({ user, onLogout }) {
       }
       if (asistenciasResult.success) {
         setAsistencias(asistenciasResult.data || []);
+        console.log('✅ Asistencias cargadas:', asistenciasResult.data?.length || 0);
+        console.log('📊 ASISTENCIAS COMPLETAS:', asistenciasResult.data);
+        console.log('📊 Estado loading:', loading);
+        console.log('📊 Cantidad asistencias:', asistencias.length);
       }
     } catch (err) {
       mostrarMensaje('Error al cargar datos', 'error');
@@ -387,62 +391,58 @@ function Dashboard({ user, onLogout }) {
           </div>
         )}
 
-        {/* Listado de Asistencias del Día */}
-        {!loading && asistencias.length > 0 && (
-          <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-            <div className="p-6 border-b border-gray-200 bg-gray-50">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-800">
-                  Asistencias Registradas
-                </h2>
-                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
-                  {asistencias.length} registros
-                </span>
-              </div>
+        {/* Listado de Asistencias del Día - SIEMPRE VISIBLE */}
+        <div className="mt-6 bg-white rounded-lg shadow-sm border overflow-hidden">
+          <div className="p-6 border-b bg-gray-50">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-800">
+                Asistencias Registradas Hoy
+              </h2>
+              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                {asistencias.length} {asistencias.length === 1 ? 'registro' : 'registros'}
+              </span>
             </div>
+          </div>
+
+          {loading ? (
+            <div className="p-12 text-center">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-indigo-600"></div>
+              <p className="mt-4 text-gray-600 font-medium">Cargando asistencias...</p>
+            </div>
+          ) : asistencias.length === 0 ? (
+            <div className="p-12 text-center">
+              <Calendar className="mx-auto text-gray-300 mb-4" size={48} />
+              <p className="text-gray-500 font-medium">No hay asistencias registradas para hoy</p>
+              <p className="text-gray-400 text-sm mt-2">
+                Selecciona personal y registra su asistencia
+              </p>
+            </div>
+          ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-100 border-b-2 border-gray-200">
+                <thead className="bg-gray-100 border-b-2">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                      Personal
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                      Entrada
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                      Salida
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                      Jornada
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                      Horas
-                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Personal</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Entrada</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Salida</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Jornada</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Horas</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y">
                   {asistencias.map((asistencia, index) => (
                     <tr key={asistencia.idRegistro} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                        {asistencia.nombreCompleto}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-700 font-mono">
-                        {asistencia.horaEntrada || '-'}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-700 font-mono">
-                        {asistencia.horaSalida || '-'}
-                      </td>
+                      <td className="px-6 py-4 text-sm font-medium">{asistencia.nombreCompleto}</td>
+                      <td className="px-6 py-4 text-sm font-mono">{asistencia.horaEntrada || '-'}</td>
+                      <td className="px-6 py-4 text-sm font-mono">{asistencia.horaSalida || '-'}</td>
                       <td className="px-6 py-4">
-                        <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${
-                          asistencia.tipoJornada === '8 horas'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-purple-100 text-purple-800'
+                        <span className={`px-3 py-1 text-xs font-bold rounded-full ${
+                          asistencia.tipoJornada === '6 horas' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
                         }`}>
                           {asistencia.tipoJornada}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-700 font-semibold">
+                      <td className="px-6 py-4 text-sm font-semibold">
                         {asistencia.horasTrabajadas ? `${asistencia.horasTrabajadas.toFixed(2)}h` : '-'}
                       </td>
                     </tr>
@@ -450,8 +450,8 @@ function Dashboard({ user, onLogout }) {
                 </tbody>
               </table>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </main>
     </div>
   );
